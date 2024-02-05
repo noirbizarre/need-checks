@@ -9,9 +9,11 @@ git tag -fa "v${MAJOR_MINOR}" -m "Update major.minor version tag"
 git push origin "v${MAJOR_MINOR}" --force
 
 MAJOR=${VERSION%%.*}
-echo "Tagging <major> version v${MAJOR}"
-git tag -fa "v${MAJOR}" -m "Update major version tag"
-git push origin "v${MAJOR}" --force
+if [ "${MAJOR}" != "0" ]; then
+    echo "Tagging <major> version v${MAJOR}"
+    git tag -fa "v${MAJOR}" -m "Update major version tag"
+    git push origin "v${MAJOR}" --force
+fi
 
 
 # Prepare next dev version
