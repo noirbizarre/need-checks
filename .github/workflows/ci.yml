@@ -10,6 +10,7 @@ on:
 
 jobs:
   tests:
+    name: 🧪 Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -30,7 +31,11 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   docker:
+    name: 🐟 Docker image
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Clone
         uses: actions/checkout@v4
