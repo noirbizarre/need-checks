@@ -30,8 +30,5 @@ Expect or wait status checks for a commit
 
 ## Outputs
 
-| Output | Description |
-|--------|-------------|
-| `time` | The time we greeted you |
-
+N/A
 <!-- auto:end -->
