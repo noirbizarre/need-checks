@@ -1,0 +1,39 @@
+name: Need checks
+description: Verify or wait for commit status check
+
+branding:
+  icon: check-circle
+  color: green
+
+inputs:
+  token:
+    description: Github token used to query Github API
+    default: ${{ github.token }}
+  repository:
+    description: Github repository to wait for
+    default: ${{ github.repository }}
+  ref:
+    description: git ref to check status on
+    default: ${{ github.sha }}
+  workflow:
+    description: Restrict checks to a given workflow
+  wait:
+    description: Wait for all status check
+    default: false
+  wait_interval:
+    description: time interval (in seconds) between checks while waiting
+    default: 60
+  wait_timeout:
+    description: max time to wait if defined
+    default: ""
+  conclusions:
+    description: comma separated list of accepted conclusions
+    default: success,skipped
+
+
+runs:
+  using: docker
+  image: ghcr.io/noirbizarre/need-checks:main
+  env:
+      CONTEXT_GITHUB: ${{ toJson(github) }}
+      CONTEXT_INPUTS: ${{ toJson(inputs) }}

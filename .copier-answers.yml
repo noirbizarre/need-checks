@@ -1,0 +1,22 @@
+# Changes here will be overwritten by Copier
+_commit: 5719aa6
+_src_path: copier.templates/python.copier
+author_email: noirbizarre@gmail.com
+author_fullname: Axel Haustant
+author_username: noirbizarre
+copyright_license: MIT License
+has_docs: false
+is_cli: false
+is_lib: false
+is_private: false
+project_description: Expect or wait status checks for a commit
+project_name: Need Checks
+project_slug: need-checks
+python_distribution: need-checks
+python_package: need_checks
+repository_name: need-checks
+repository_namespace: noirbizarre
+repository_provider: github.com
+use_src: false
+
+# End

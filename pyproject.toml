@@ -1,0 +1,195 @@
+[project]
+name = "need-checks"
+description = "Expect or wait status checks for a commit"
+authors = [
+    {name = "Axel Haustant", email = "noirbizarre@gmail.com"},
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = "~=3.12.0"
+keywords = []
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "ghapi>=1.0.4",
+    "click>=8.1.7",
+    "strictyaml>=1.7.3",
+    "pydantic>=2.6.0",
+]
+[project.urls]
+Homepage = "https://github.com/noirbizarre/need-checks"
+Documentation = "https://github.com/noirbizarre/need-checks#readme"
+Repository = "https://github.com/noirbizarre/need-checks"
+Issues = "https://github.com/noirbizarre/need-checks/issues"
+
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm.version]
+source = "scm"
+write_to = "need_checks/VERSION"
+
+
+[tool.pdm.dev-dependencies]
+test = [
+    "pytest>=7.1.2",
+    "pytest-sugar>=0.9.5",
+    "pytest-cov>=3.0.0",
+    "requests-mock>=1.11.0",
+    "pytest-mock>=3.12.0",
+    "polyfactory>=2.14.1",
+]
+lint = [
+    "mypy>=1.8.0",
+    "ruff>=0.2.0",
+    "codespell>=2.2.6",
+]
+doc = [
+    "emotional",
+    "strictyaml>=1.7.3",
+]
+
+
+[tool.pdm.scripts]
+test.help = "Run the test suite"
+test.cmd = "pytest"
+
+lint.help = "Lint all tracked files using pre-commit"
+lint.cmd = "pre-commit run --all-files"
+
+format.help = "Format the code according to known rules"
+format.composite = [
+    "codespell --write-changes",
+    "ruff check --select I --fix need_checks tests scripts",
+    "ruff format need_checks tests scripts",
+]
+
+typing.help = "Full typing linting (includes imported packages and uncommmited files)"
+typing.cmd = "mypy need_checks tests --warn-unused-ignores"
+
+cover.help = "Run the test suite with coverage"
+pre_cover = "coverage erase"
+cover.composite = [
+  """
+  test
+    --cov
+    --cov-report=term
+    --cov-report=html:reports/coverage
+    --cov-report=xml:reports/coverage.xml
+    --no-cov-on-fail
+    --junitxml=reports/tests.xml
+  """
+]
+
+"cover:all".help = "Run the test suite against all supported Python version"
+"pre_cover:all" = "coverage erase"
+"cover:all".cmd = "tox --parallel"
+
+changelog.help = "Update the changelog"
+changelog.cmd = "cz changelog"
+
+action.help = "Test the action"
+action.call = "need_checks.action:__main__"
+
+readme.help = "Update the README.md"
+readme.call = "scripts.readme:__main__"
+
+
+[tool.pdm.dockerize]
+include = ["action"]
+
+
+[tool.commitizen]
+name = "emotional"
+github = "noirbizarre/need-checks"
+tag_format = "v$version"
+order_by_scope = true
+version_provider = "scm"
+major_version_zero = true  # Remove this line for the first 1.x release
+pre_bump_hooks = [
+  "scripts/bump.sh"
+]
+post_bump_hooks = [
+  "scripts/post-bump.sh"
+]
+
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+norecursedirs = ".git build dist"
+testpaths = [
+  "need_checks/",
+  "tests/",
+]
+
+
+[tool.coverage.run]
+source_pkgs = ["need_checks"]
+branch = true
+omit = [
+  "tests/*",
+]
+
+[tool.coverage.report]
+exclude_also = [
+  'def __repr__',
+  'if TYPE_CHECKING:',
+]
+ignore_errors = true
+
+
+#[tool.black]
+# Black adds 10% tolernace which makes it to 110
+# See:
+#  https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html#line-length
+#line-length = 100
+
+
+[tool.ruff]
+line-length = 100
+respect-gitignore = true
+src = [".", "tests"]
+
+[tool.ruff.lint]
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E",
+    "W",
+    # McCabe # fake8-comprehension
+    "C",
+    # Pyupgrade
+    "UP",
+    # isort
+    "I001"
+]
+isort.known-first-party = ["need_checks"]
+isort.known-third-party = ["pytest"]
+
+
+[tool.mypy]
+exclude = [
+  "docs",
+  "build",
+  "dist",
+]
+plugins = [
+  "pydantic.mypy",
+]
+
+
+[tool.codespell]
+skip = "./reports,./.*_cache"

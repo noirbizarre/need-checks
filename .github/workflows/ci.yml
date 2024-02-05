@@ -1,0 +1,80 @@
+name: 👮 CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: pdm sync -d -G test
+
+      - name: Run Tests
+        run: pdm run cover -v --force-sugar --color=yes
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Compute docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/noirbizarre/need-checks
+          flavor: latest=false
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=pep440,pattern={{major}}
+            type=pep440,pattern={{major}}.{{minor}}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Push docker image
+        uses: docker/build-push-action@v5
+        id: docker
+        with:
+          build-args: |
+            VERSION=${{ github.ref_type == 'tag' && github.ref_name || format('0.dev+{0}.{1}', env.DOCKER_METADATA_OUTPUT_VERSION, github.sha) }}
+          pull: true
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Create Summary
+        run: |
+          echo "**Image:** \`${{ fromJSON(steps.docker.outputs.metadata)['image.name'] }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Digest:** \`${{ fromJSON(steps.docker.outputs.metadata)['containerimage.digest'] }}\`" >> $GITHUB_STEP_SUMMARY
+        shell: bash

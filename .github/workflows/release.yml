@@ -1,0 +1,58 @@
+name: 🚀 Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      increment:
+        type: choice
+        description: Kind of increment (optional)
+        options:
+          - ''
+          - MAJOR
+          - MINOR
+          - PATCH
+        default: ''
+        required: false
+
+jobs:
+  release:
+    name: Bump version and create changelog with commitizen
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Need checks
+        uses: noirbizarre/need-checks@main
+        with:
+          token: ${{ secrets.PAT }}
+          workflow: ci.yml
+
+      - name: Clone
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
+
+      - name: Bump using commitizen
+        uses: commitizen-tools/commitizen-action@0.20.0
+        with:
+          github_token: ${{ secrets.PAT }}
+          changelog_increment_filename: body.md
+          extra_requirements: emotional
+          increment: ${{ github.event.inputs.increment }}
+
+      - name: Github Release
+        id: github-release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: body.md
+          tag_name: ${{ env.REVISION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+
+      - name: Publish summary
+        run: |
+          cat body.md >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- GitHub release: ${{ steps.github-release.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Docker image: ghcr.io/niorbizarre/need-checks:${REVISION}" >> $GITHUB_STEP_SUMMARY
