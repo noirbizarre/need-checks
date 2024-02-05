@@ -45,7 +45,7 @@ repos:
           - emotional
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.24.1
+    rev: 0.27.4
     hooks:
       - id: check-github-workflows
       - id: check-dependabot
@@ -69,7 +69,7 @@ repos:
           - pydantic
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.5
+    rev: v2.2.6
     hooks:
     - id: codespell
       additional_dependencies:
