@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -10,6 +11,20 @@ def test_target_owner_and_repo():
 
     assert inputs.target_owner == "owner"
     assert inputs.target_repo == "repo"
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    (
+        pytest.param("", None, id="empty string"),
+        pytest.param("42", 42, id="int as str"),
+        pytest.param("null", None, id="null"),
+    ),
+)
+def test_wait_timeout_input(value: str, expected: Any, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setenv("INPUT_WAIT_TIMEOUT", value)
+
+    assert Inputs().wait_timeout == expected
 
 
 def test_parse_github_composite_docker_action_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):

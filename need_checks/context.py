@@ -5,7 +5,7 @@ from pathlib import Path
 from types import GenericAlias
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from pydantic.fields import Field, FieldInfo, computed_field
 from pydantic_settings import (
     BaseSettings,
@@ -54,6 +54,15 @@ class Inputs(BaseContext):
     def target_repo(self) -> str:
         _, repo = self.repository.split("/", 1)
         return repo
+
+    @field_validator("wait_timeout", "workflow", mode="before")
+    @classmethod
+    def optional_str(cls, v: Any) -> int | None:
+        match v:
+            case "" | "null":
+                return None
+            case _:
+                return v
 
 
 class Repository(BaseModel):

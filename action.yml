@@ -25,7 +25,6 @@ inputs:
     default: 60
   wait_timeout:
     description: max time to wait if defined
-    default: ""
   conclusions:
     description: comma separated list of accepted conclusions
     default: success,skipped
