@@ -407,6 +407,7 @@ def test_run_wait_then_timeout(
         assert mock_call == mock_api.mocker.call(ctx.inputs.wait_interval)
 
 
+@pytest.mark.usefixtures("ctx")
 def test_main_exit_0(mocker: MockerFixture):
     mocker.patch.object(action, "run")
 
@@ -416,6 +417,7 @@ def test_main_exit_0(mocker: MockerFixture):
     assert result.exit_code == 0
 
 
+@pytest.mark.usefixtures("ctx")
 def test_main_graceful_exit_handled_errors(mocker: MockerFixture):
     mocker.patch.object(action, "run", side_effect=ActionError("KO"))
 
@@ -426,6 +428,7 @@ def test_main_graceful_exit_handled_errors(mocker: MockerFixture):
     assert result.output == "❌ KO\n"
 
 
+@pytest.mark.usefixtures("ctx")
 def test_main_exit_unhandled_error_passthrough(mocker: MockerFixture):
     mocker.patch.object(action, "run", side_effect=ValueError("Unhandled error"))
 

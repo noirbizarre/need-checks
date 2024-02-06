@@ -11,11 +11,12 @@ import pytest
 from fastcore.net import ExceptionsHTTP
 from ghapi.all import GhApi
 
-from need_checks.context import Context, read_context
+from need_checks.context import Context
 from need_checks.types import CheckRunList, Job, JobList, WorkflowRun, WorkflowRunList
 from tests.factories import CheckRunFactory, JobFactory, WorkflowRunFactory
 
 if TYPE_CHECKING:
+    from pathlib import Path
     from urllib.request import Request
 
     from ghapi.core import _GhVerb as GhVerb
@@ -152,11 +153,20 @@ def mock_api(owner: str, repo: str, mocker: MockerFixture) -> MockGhApi:
 
 
 @pytest.fixture
-def ctx() -> Context:
-    ctx = read_context()
-    ctx.github.repository_owner = "owner"
-    ctx.github.event.repository.name = "repo"
-    return ctx
+def ctx(owner: str, repo: str, monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Context:
+    # event_path = tmp_path / "event.json"
+    # event_path.write_text("""{"repository": {"name": "repo"}}""")
+
+    event_path = tmp_path / "event.json"
+    event_path.write_text(f"""{{"repository": {{"name": "{repo}"}}}}""")
+    monkeypatch.setenv("GITHUB_REPOSITORY_OWNER", owner)
+    monkeypatch.setenv("GITHUB_JOB", "my-job")
+    monkeypatch.setenv(
+        "GITHUB_WORKFLOW_REF", f"{owner}/{repo}/.github/workflows/ci.yml@refs/heads/main"
+    )
+    monkeypatch.setenv("GITHUB_RUN_ID", "45")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event_path))
+    return Context()
 
 
 @pytest.fixture

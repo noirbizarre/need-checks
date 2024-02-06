@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from base64 import b64decode
 from enum import Enum
 from time import sleep
@@ -9,11 +8,10 @@ from typing import cast
 import click
 import strictyaml as yaml
 from fastcore.net import HTTP404NotFoundError
-from fastcore.xtras import obj2dict
 from ghapi.all import GhApi
 
 from . import errors, ui
-from .context import Context, read_context
+from .context import Context
 from .types import CheckRun, CheckRunList, GitRef, Job, WorkflowRun
 
 
@@ -128,7 +126,6 @@ def run(ctx: Context):
             head_sha=ref["object"]["sha"],
         )
         last_run = cast(WorkflowRun, runs.workflow_runs[-1])
-        print("Last run", json.dumps(obj2dict(last_run), indent=2))
         check_suite = last_run["check_suite_id"]
 
     waited_for = 0
@@ -151,7 +148,7 @@ def run(ctx: Context):
 
 @click.command
 def __main__():
-    ctx = read_context()
+    ctx = Context()
     try:
         run(ctx)
     except errors.ActionError as error:

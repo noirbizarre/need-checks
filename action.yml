@@ -33,7 +33,4 @@ inputs:
 
 runs:
   using: docker
-  image: ghcr.io/noirbizarre/need-checks:main
-  env:
-      CONTEXT_GITHUB: ${{ toJson(github) }}
-      CONTEXT_INPUTS: ${{ toJson(inputs) }}
+  image: docker://ghcr.io/noirbizarre/need-checks:main
