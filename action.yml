@@ -14,7 +14,7 @@ inputs:
     default: ${{ github.repository }}
   ref:
     description: git ref to check status on
-    default: ${{ github.sha }}
+    default: ${{ github.ref }}
   workflow:
     description: Restrict checks to a given workflow
   wait:
