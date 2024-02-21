@@ -125,6 +125,8 @@ def run(ctx: Context):
             workflow_id=ctx.inputs.workflow,
             head_sha=ref["object"]["sha"],
         )
+        if not runs.workflow_runs:
+            raise errors.RequirementsNotMet("The workflow was not run on the commit")
         last_run = cast(WorkflowRun, runs.workflow_runs[-1])
         check_suite = last_run["check_suite_id"]
 
