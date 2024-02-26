@@ -38,6 +38,7 @@ jobs:
           github_token: ${{ secrets.PAT }}
           changelog_increment_filename: body.md
           extra_requirements: emotional
+          git_redirect_stderr: true
           increment: ${{ github.event.inputs.increment }}
 
       - name: Github Release

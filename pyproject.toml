@@ -115,7 +115,6 @@ include = ["action"]
 [tool.commitizen]
 name = "emotional"
 github = "noirbizarre/need-checks"
-tag_format = "v$version"
 order_by_scope = true
 version_provider = "scm"
 major_version_zero = true  # Remove this line for the first 1.x release
