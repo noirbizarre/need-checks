@@ -1,7 +1,7 @@
 # Need Checks
 
 [![CI](https://github.com/noirbizarre/need-checks/actions/workflows/ci.yml/badge.svg)](https://github.com/noirbizarre/need-checks/actions/workflows/ci.yml)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/noirbizarre/need-checks/0.1.1.svg)](https://results.pre-commit.ci/latest/github/noirbizarre/need-checks/0.1.1)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/noirbizarre/need-checks/main.svg)](https://results.pre-commit.ci/latest/github/noirbizarre/need-checks/main)
 [![codecov](https://codecov.io/gh/noirbizarre/need-checks/graph/badge.svg?token=zcMKc9CqAG)](https://codecov.io/gh/noirbizarre/need-checks)
 
 Expect or wait status checks for a commit
@@ -9,7 +9,7 @@ Expect or wait status checks for a commit
 ## Usage
 
 ```yaml
-- uses: noirbizarre/need-checks@0.1.1
+- uses: noirbizarre/need-checks@main
   with:
     token: ${{ github.token }}
 ```
