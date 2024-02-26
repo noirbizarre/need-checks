@@ -10,7 +10,7 @@ from pytest_mock import MockerFixture
 
 from need_checks import action
 from need_checks.errors import ActionError, RequirementsNotMet, Timeout, UnknownRef
-from need_checks.types import CheckRunList, Content
+from need_checks.types import CheckRunList, Content, WorkflowRunList
 from tests.factories import (
     CheckRunFactory,
     ContentFactory,
@@ -293,6 +293,35 @@ def test_run_success_same_repo_with_workflow(
     )
 
     action.run(ctx)
+
+
+def test_same_repo_with_workflow_never_ran(
+    mock_api: MockGhApi, ctx: Context, current_job: Job, mock_workflow: MockWorkflow
+):
+    ctx.inputs.repository = "owner/repo"
+    ctx.inputs.ref = "1.2.3"
+    ctx.inputs.workflow = "never.yml"
+
+    ref = GitRefFactory.build(ref=f"refs/tags/{ctx.inputs.ref}")
+    mock_api.git.get_ref(ref=ctx.inputs.ref).error(404)
+    mock_api.git.get_ref(ref=f"tags/{ctx.inputs.ref}").returns(ref)
+
+    # Current workflow
+    mock_workflow(
+        current_job,
+        current=True,
+        ref=ref["ref"],
+        check_suite_id=42,
+        head_sha=ref["object"]["sha"],
+    )
+
+    mock_api.actions.list_workflow_runs(
+        workflow_id=ctx.inputs.workflow,
+        head_sha=ref["object"]["sha"],
+    ).returns(WorkflowRunList(total_count=0, workflow_runs=[]))
+
+    with pytest.raises(RequirementsNotMet):
+        action.run(ctx)
 
 
 def test_run_success_other_repo(
