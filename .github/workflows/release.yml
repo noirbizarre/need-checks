@@ -33,7 +33,7 @@ jobs:
           token: ${{ secrets.PAT }}
 
       - name: Bump using commitizen
-        uses: commitizen-tools/commitizen-action@0.20.0
+        uses: commitizen-tools/commitizen-action@0.21.0
         with:
           github_token: ${{ secrets.PAT }}
           changelog_increment_filename: body.md
