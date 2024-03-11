@@ -34,7 +34,7 @@
 ### 🐛 Bug fixes
 
 - **context**: proper parsing of optional values from environment
-- **context**: rely on github exposed environement variables
+- **context**: rely on github exposed environment variables
 - **inputs**: default ref is `{{ github.ref }}`
 
 ### 📖 Documentation
