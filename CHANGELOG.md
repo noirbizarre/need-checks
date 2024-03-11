@@ -1,6 +1,10 @@
-# Changelog
+## 🚀 0.1.2 (2024-03-11)
 
-## 🚀 0.1.1 (2024-02-26)
+### 📦 Build
+
+- prepare next `main` version
+
+## 🚀 0.1 (2024-02-26)
 
 ### 🐛 Bug fixes
 
@@ -15,9 +19,13 @@
 
 - **deps**: update build/dev dependencies
 
-<!-- End of file -->
+## 🚀 0.1.0 (2024-02-06)
 
-## 🚀 v0.1.0 (2024-02-06)
+### 📦 Build
+
+- prepare next `main` version
+
+## 🚀 v0.1 (2024-02-06)
 
 ### 💫 New features
 
@@ -26,7 +34,7 @@
 ### 🐛 Bug fixes
 
 - **context**: proper parsing of optional values from environment
-- **context**: rely on github exposed environment variables
+- **context**: rely on github exposed environement variables
 - **inputs**: default ref is `{{ github.ref }}`
 
 ### 📖 Documentation
