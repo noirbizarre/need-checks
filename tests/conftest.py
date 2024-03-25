@@ -176,8 +176,7 @@ def current_job(ctx: Context) -> Job:
 
 
 class MockWorkflow(Protocol):
-    def __call__(self, *jobs: Job, ref: str, current: bool = False, **kwargs) -> WorkflowRun:
-        ...
+    def __call__(self, *jobs: Job, ref: str, current: bool = False, **kwargs) -> WorkflowRun: ...
 
 
 @pytest.fixture
