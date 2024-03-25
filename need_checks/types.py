@@ -135,15 +135,18 @@ class CheckRun(Node):
     html_url: str | None
     details_url: str | None
     status: Literal["queued", "in_progress", "completed"]
-    conclusion: Literal[
-        "success",
-        "failure",
-        "neutral",
-        "cancelled",
-        "skipped",
-        "timed_out",
-        "action_required",
-    ] | None
+    conclusion: (
+        Literal[
+            "success",
+            "failure",
+            "neutral",
+            "cancelled",
+            "skipped",
+            "timed_out",
+            "action_required",
+        ]
+        | None
+    )
     started_at: str | None
     completed_at: str | None
     output: CheckRunOutput
