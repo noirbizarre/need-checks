@@ -56,9 +56,9 @@ def conclusion_icon(status: str) -> str:
         case "action_required":
             return "🔏"
         case "neutral":
-            return "☯"
+            return "◾"
         case _:
-            return "⁉"
+            return "❓"
 
 
 def display_checks(label: str, checks: list[CheckRun]):
