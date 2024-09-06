@@ -1,3 +1,19 @@
+## 🚀 0.1.3 (2024-09-06)
+
+### 🐛 Bug fixes
+
+- **conclusion**: change some conclusion icons for readability: `neutral` (◾ same as GitHub) and unknown (❓)
+
+### 📖 Documentation
+
+- **CHANGELOG**: fix typo
+
+### 📦 Build
+
+- **deps**: re-lock to fetch latest version (and remove those nasty `fastcore` warnings)
+- prepare next `main` version
+
+
 ## 🚀 0.1.2 (2024-03-11)
 
 ### 📦 Build
