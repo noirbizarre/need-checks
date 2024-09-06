@@ -55,4 +55,4 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "- GitHub release: ${{ steps.github-release.outputs.url }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Docker image: ghcr.io/niorbizarre/need-checks:${REVISION}" >> $GITHUB_STEP_SUMMARY
+          echo "- Docker image: ghcr.io/noirbizarre/need-checks:${REVISION}" >> $GITHUB_STEP_SUMMARY
