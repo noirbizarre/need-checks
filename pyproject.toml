@@ -107,6 +107,14 @@ action.call = "need_checks.action:__main__"
 readme.help = "Update the README.md"
 readme.call = "scripts.readme:__main__"
 
+update-stack.help = "Update all dependencies (keep consistency, accept pdm update parameters)"
+update-stack.composite = [
+    "pre-commit autoupdate",
+    "{pdm} update {args}",
+    "{pdm} format",
+]
+
+
 
 [tool.pdm.dockerize]
 include = ["action"]
