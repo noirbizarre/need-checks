@@ -17,7 +17,7 @@ RUN pip install pdm pdm-dockerize
 
 RUN --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=pdm.lock,target=pdm.lock \
-    --mount=type=cache,target=$HOME/.cache \
+    --mount=type=cache,target=~/.cache \
     pdm dockerize --prod -v
 
 ##
