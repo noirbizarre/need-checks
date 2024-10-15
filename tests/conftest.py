@@ -237,6 +237,7 @@ def mock_workflow(mock_api: MockGhApi, ctx: Context) -> MockWorkflow:
         workflow_run = WorkflowRunFactory.build(
             path=f".github/workflows/{file}", repository__full_name=repository, **kwargs
         )
+        check_suite = workflow_run["check_suite_id"]
         if current:
             ctx.github.run_id = workflow_run["id"]
             ctx.github.workflow_ref = f"{repository}/{workflow_run['path']}@{ref}"
@@ -256,11 +257,14 @@ def mock_workflow(mock_api: MockGhApi, ctx: Context) -> MockWorkflow:
                 name=job["name"],
                 status=job["status"],
                 conclusion=job["conclusion"],
-                check_suite={"id": workflow_run["check_suite_id"]},
+                check_suite={"id": check_suite},
             )
             for job in jobs
         ]
         mock_api.checks.list_for_ref(owner=owner, repo=repo, ref=ref).returns(
+            CheckRunList(total_count=len(checks), check_runs=checks)
+        )
+        mock_api.checks.list_for_suite(owner=owner, repo=repo, check_suite_id=check_suite).returns(
             CheckRunList(total_count=len(checks), check_runs=checks)
         )
         return workflow_run

@@ -16,6 +16,7 @@ from tests.factories import (
     ContentFactory,
     GitRefFactory,
     JobFactory,
+    WorkflowRunFactory,
 )
 
 if TYPE_CHECKING:
@@ -184,8 +185,7 @@ def test_select_workflow_checks_but_self(mock_api: MockGhApi, ctx: Context, curr
             status=current_job["status"], name=current_job["name"], check_suite={"id": 42}
         )
     )
-    checks.append(CheckRunFactory.build())
-    mock_api.checks.list_for_ref(ref="ref").returns(
+    mock_api.checks.list_for_suite(check_suite_id=42).returns(
         CheckRunList(total_count=len(checks), check_runs=checks)
     )
 
@@ -195,7 +195,6 @@ def test_select_workflow_checks_but_self(mock_api: MockGhApi, ctx: Context, curr
 
     for check in selected:
         assert check["name"] != current_job["name"]
-        assert check["check_suite"]["id"] == 42  # type: ignore[index]
 
 
 def test_decide_for_checks_empty(ctx: Context):
@@ -322,6 +321,66 @@ def test_same_repo_with_workflow_never_ran(
 
     with pytest.raises(RequirementsNotMet):
         action.run(ctx)
+
+
+def test_same_repo_with_workflow_multiple_runs_and_attempts(
+    mock_api: MockGhApi, ctx: Context, current_job: Job, mock_workflow: MockWorkflow
+):
+    ctx.inputs.repository = "owner/repo"
+    ctx.inputs.ref = "1.2.3"
+    ctx.inputs.workflow = "ci.yml"
+
+    ref = GitRefFactory.build(ref=f"refs/tags/{ctx.inputs.ref}")
+    mock_api.git.get_ref(ref=ctx.inputs.ref).error(404)
+    mock_api.git.get_ref(ref=f"tags/{ctx.inputs.ref}").returns(ref)
+
+    # Current workflow
+    mock_workflow(
+        current_job,
+        current=True,
+        ref=ref["ref"],
+        head_sha=ref["object"]["sha"],
+    )
+
+    workflow_runs = WorkflowRunFactory.batch(
+        3,
+        path=".github/workflows/ci.yml",
+        repository__full_name=ctx.inputs.repository,
+        head_sha=ref["object"]["sha"],
+    )
+    checks = []
+    # First workflow is the last with success, 2nd attempt
+    workflow_runs[0].update(run_number=4012, run_attempt=2, check_suite_id=53)
+    check = CheckRunFactory.build(status="completed", conclusion="success", check_suite={"id": 53})
+    mock_api.checks.list_for_suite(owner="owner", repo="repo", check_suite_id=53).returns(
+        CheckRunList(total_count=1, check_runs=[check])
+    )
+    checks.append(check)
+    # 2nd run the first failed attempt
+    workflow_runs[1].update(run_number=4012, run_attempt=1, check_suite_id=52)
+    check = CheckRunFactory.build(status="completed", conclusion="failure", check_suite={"id": 52})
+    mock_api.checks.list_for_suite(owner="owner", repo="repo", check_suite_id=52).returns(
+        CheckRunList(total_count=1, check_runs=[check])
+    )
+    checks.append(check)
+    # 3rd is the first run which has been canceled
+    workflow_runs[2].update(run_number=4011, run_attempt=1, check_suite_id=51)
+    check = CheckRunFactory.build(status="completed", conclusion="canceled", check_suite={"id": 51})
+    mock_api.checks.list_for_suite(owner="owner", repo="repo", check_suite_id=51).returns(
+        CheckRunList(total_count=1, check_runs=[check])
+    )
+    checks.append(check)
+
+    mock_api.checks.list_for_ref(owner="owner", repo="repo", ref=ref["ref"]).returns(
+        CheckRunList(total_count=len(checks), check_runs=checks)
+    )
+
+    mock_api.actions.list_workflow_runs(
+        workflow_id=ctx.inputs.workflow,
+        head_sha=ref["object"]["sha"],
+    ).returns(WorkflowRunList(total_count=len(workflow_runs), workflow_runs=workflow_runs))
+
+    action.run(ctx)
 
 
 def test_run_success_other_repo(
