@@ -32,4 +32,4 @@ inputs:
 
 runs:
   using: docker
-  image: docker://ghcr.io/noirbizarre/need-checks:main
+  image: docker://ghcr.io/noirbizarre/need-checks:0.1.4

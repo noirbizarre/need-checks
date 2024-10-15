@@ -1,3 +1,15 @@
+## 🚀 0.1.4 (2024-10-15)
+
+### 🐛 Bug fixes
+
+- **runs**: ensure the target workflow run is the last run attempt
+
+### 📦 Build
+
+- **deps**: update dependencies
+- prepare next `main` version
+
+
 ## 🚀 0.1.3 (2024-09-06)
 
 ### 🐛 Bug fixes
