@@ -100,7 +100,7 @@ def test_find_current_job_with_name(
         f"""\
         jobs:
             {ctx.github.job}:
-                name: {current_job['name']}
+                name: {current_job["name"]}
         """
     )
     content = as_content(workflow)
