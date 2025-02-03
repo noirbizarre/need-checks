@@ -30,26 +30,26 @@ repos:
       - id: detect-private-key
 
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.19.2
+    rev: 2.22.3
     hooks:
       - id: pdm-lock-check
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.29.0
+    rev: v4.1.1
     hooks:
       - id: commitizen
         additional_dependencies:
           - emotional==0.5.1
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.29.4
+    rev: 0.31.1
     hooks:
       - id: check-github-workflows
       - id: check-dependabot
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.6.9
+    rev: v0.9.4
     hooks:
       # Run the linter.
       - id: ruff
@@ -58,7 +58,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.12.0
+    rev: v1.14.1
     hooks:
       - id: mypy
         exclude: docs/.*\.pyi?$
@@ -66,7 +66,7 @@ repos:
           - pydantic==2.9.2
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.1
     hooks:
     - id: codespell
       additional_dependencies:
