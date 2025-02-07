@@ -14,14 +14,23 @@ Expect or wait status checks for a commit
     token: ${{ github.token }}
 ```
 
+## Permissions
+
+This action uses the GitHub token to query GitHut API and requires the following permissions:
+```yaml
+actions: read
+checks: read
+contents: read
+```
+
 <!-- auto:start -->
 ## Inputs
 
 | Input | Description | Default | Required |
 |-------|-------------|---------|----------|
-| `token` | Github token used to query Github API | `${{ github.token }}` | `false` |
-| `repository` | Github repository to wait for | `${{ github.repository }}` | `false` |
-| `ref` | git ref to check status on | `${{ github.sha }}` | `false` |
+| `token` | GitHub token with proper permissions to query the API | `${{ github.token }}` | `false` |
+| `repository` | GitHub repository to wait for | `${{ github.repository }}` | `false` |
+| `ref` | git ref to check status on | `${{ github.ref }}` | `false` |
 | `workflow` | Restrict checks to a given workflow | `""` | `false` |
 | `wait` | Wait for all status check | `false` | `false` |
 | `wait_interval` | time interval (in seconds) between checks while waiting | `60` | `false` |

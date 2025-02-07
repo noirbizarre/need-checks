@@ -7,10 +7,10 @@ branding:
 
 inputs:
   token:
-    description: Github token used to query Github API
+    description: GitHub token with proper permissions to query the API
     default: ${{ github.token }}
   repository:
-    description: Github repository to wait for
+    description: GitHub repository to wait for
     default: ${{ github.repository }}
   ref:
     description: git ref to check status on
